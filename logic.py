@@ -10,6 +10,7 @@ def get_insights(csv_file):
     matchups_freq = defaultdict(int)
     wins = defaultdict(lambda: defaultdict(int))
     losses = defaultdict(lambda: defaultdict(int))
+    deck_usage = defaultdict(int)
     
     valid_decks = set()
 
@@ -47,6 +48,9 @@ def get_insights(csv_file):
             
             wins[d1][d2] += 1
             losses[d2][d1] += 1
+            
+            deck_usage[d1] += 1
+            deck_usage[d2] += 1
 
     common = sorted(
         [{"deck1": k[0], "deck2": k[1], "count": v} for k, v in matchups_freq.items()],
@@ -70,9 +74,16 @@ def get_insights(csv_file):
                 invincible.append({"user_deck": u, "opponent_deck": opp, "wins": wins[u][opp]})
                 
     invincible = sorted(invincible, key=lambda x: x['wins'], reverse=True)
+    
+    most_used = sorted(
+        [{"deck": k, "usage": v} for k, v in deck_usage.items()],
+        key=lambda x: x['usage'],
+        reverse=True
+    )
                 
     return json.dumps({
         "most_common_matchups": common,
         "never_happened": unique_never,
-        "invincibility": invincible
+        "invincibility": invincible,
+        "most_used_decks": most_used
     })

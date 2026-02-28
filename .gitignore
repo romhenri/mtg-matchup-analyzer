@@ -1,0 +1,7 @@
+# Python Cache
+*.pyc
+*.pyo
+*.pyd
+*.env
+/__pycache__
+log.txt
