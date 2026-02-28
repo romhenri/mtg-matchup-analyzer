@@ -80,10 +80,27 @@ def get_insights(csv_file):
         key=lambda x: x['usage'],
         reverse=True
     )
+
+    win_rates = []
+    for deck in valid_decks:
+        total_wins = sum(wins[deck].values())
+        total_losses = sum(losses[deck].values())
+        total_matches = total_wins + total_losses
+        if total_matches > 0:
+            wr = (total_wins / total_matches) * 100
+            win_rates.append({
+                "Deck": deck, 
+                "Partidas": total_matches, 
+                "Vitórias": total_wins, 
+                "Win Rate (%)": round(wr, 2)
+            })
+            
+    win_rates = sorted(win_rates, key=lambda x: x['Win Rate (%)'], reverse=True)
                 
     return json.dumps({
         "most_common_matchups": common,
         "never_happened": unique_never,
         "invincibility": invincible,
-        "most_used_decks": most_used
+        "most_used_decks": most_used,
+        "win_rates": win_rates
     })
